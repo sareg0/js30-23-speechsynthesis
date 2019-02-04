@@ -36,16 +36,15 @@
   const options = document.querySelectorAll('[type="range"], [name="text"]');
   const speakButton = document.querySelector('#speak');
   const stopButton = document.querySelector('#stop');
-  populateVoices()
   voicesDropdown.onchange = selectVoice
   speakButton.onclick = changeVoiceAndSpeak
   stopButton.onclick = stopSpeech
   options.forEach((option) => option.addEventListener("change", setOption))
   msg.text = document.querySelector('[name="text"]').textContent
+  synth.addEventListener("voiceschanged", populateVoices)
 
   function setOption () {
     msg[this.name] = this.value
-    console.log(msg)
     changeVoiceAndSpeak()
   }
 
@@ -77,9 +76,7 @@
     synth.cancel()
   }
 
-
   function changeVoiceAndSpeak () {
-    console.log(synth)
     synth.cancel()
     synth.speak(msg)
   }
