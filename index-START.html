@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Speech Synthesis</title>
+  <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="voiceinator">
+
+      <h1>The Voiceinator 5000</h1>
+
+      <select name="voice" id="voices">
+        <option value="">Select A Voice</option>
+      </select>
+
+      <label for="rate">Rate:</label>
+      <input name="rate" type="range" min="0" max="3" value="1" step="0.1">
+
+      <label for="pitch">Pitch:</label>
+
+      <input name="pitch" type="range" min="0" max="2" step="0.1">
+      <textarea name="text">Hello! I love JavaScript 👍</textarea>
+      <button id="stop">Stop!</button>
+      <button id="speak">Speak</button>
+
+    </div>
+
+<script>
+  const msg = new SpeechSynthesisUtterance()
+  let voices = [];
+  const synth = window.speechSynthesis
+  const voicesDropdown = document.querySelector('[name="voice"]');
+  const options = document.querySelectorAll('[type="range"], [name="text"]');
+  const speakButton = document.querySelector('#speak');
+  const stopButton = document.querySelector('#stop');
+  populateVoices()
+  voicesDropdown.onchange = selectVoice
+  speakButton.onclick = changeVoiceAndSpeak
+  stopButton.onclick = stopSpeech
+  options.forEach((option) => option.addEventListener("change", setOption))
+  msg.text = document.querySelector('[name="text"]').textContent
+
+  function setOption () {
+    msg[this.name] = this.value
+    console.log(msg)
+    changeVoiceAndSpeak()
+  }
+
+  function populateVoices () {
+    const options = synth.getVoices()
+    options.forEach((option) => {
+      voices.push(option)
+      let o = document.createElement('option')
+      o.textContent = `${option.name} ${option.lang}`
+      o.setAttribute('data-name', option.name)
+      o.setAttribute('data-lang', option.lang)
+      voicesDropdown.appendChild(o)
+    })
+  }
+
+  function selectVoice () {
+    const name = this.selectedOptions[0].dataset.name
+    const lang = this.selectedOptions[0].dataset.lang
+    const v = voices.find((voice) => voice.name == name && voice.lang == lang)
+    msg.voice = v
+    changeVoiceAndSpeak()
+  }
+
+  function speakToMe () {
+    synth.speak(msg)
+  }
+
+  function stopSpeech () {
+    synth.cancel()
+  }
+
+
+  function changeVoiceAndSpeak () {
+    console.log(synth)
+    synth.cancel()
+    synth.speak(msg)
+  }
+</script>
+
+</body>
+</html>
